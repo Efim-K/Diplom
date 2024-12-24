@@ -1,3 +1,60 @@
 from django.db import models
 
-# Create your models here.
+from config import settings
+
+NULLABLE = {"blank": "True", "null": "True"}
+
+
+class Course(models.Model):
+    """Модель курса"""
+
+    name = models.CharField(max_length=100, verbose_name="Название курса")
+    description = models.TextField(verbose_name="Описание курса", **NULLABLE)
+    image = models.ImageField(
+        upload_to="courses/", verbose_name="Изображение курса", **NULLABLE
+    )
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        verbose_name="Создатель курса",
+        **NULLABLE,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
+
+
+class Questions(models.Model):
+    """Вопросы теста по курсу"""
+
+    question = models.CharField(max_length=255, verbose_name="Вопрос")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+
+    def __str__(self):
+        return self.question
+
+    class Meta:
+        verbose_name = "Вопрос"
+        verbose_name_plural = "Вопросы"
+
+
+class Answers(models.Model):
+    """Ответы на вопросы теста"""
+
+    question = models.ForeignKey(
+        Questions, on_delete=models.CASCADE, verbose_name="Вопрос"
+    )
+    answer = models.CharField(max_length=255, verbose_name="Ответ")
+    correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name = "Ответ"
+        verbose_name_plural = "Ответы"
