@@ -1,12 +1,10 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from course.models import Answers, Course, Questions
 
 
 class CourseSerializer(ModelSerializer):
-    """
-    Serializer для курса
-    """
+    """Serializer для курса"""
 
     class Meta:
         model = Course
@@ -14,9 +12,7 @@ class CourseSerializer(ModelSerializer):
 
 
 class QuestionsSerializer(ModelSerializer):
-    """
-    Serializer для вопроса
-    """
+    """Serializer для вопроса"""
 
     class Meta:
         model = Questions
@@ -24,10 +20,29 @@ class QuestionsSerializer(ModelSerializer):
 
 
 class AnswersSerializer(ModelSerializer):
-    """
-    Serializer для ответа
-    """
+    """Serializer для ответа"""
 
     class Meta:
         model = Answers
-        fields = ["answer"]
+        fields = "__all__"
+
+
+class CourseRetrieveSerializer(ModelSerializer):
+    """Serializer для детального просмотра вопросов курса"""
+
+    questions = SerializerMethodField()
+    count_of_questions = SerializerMethodField()
+
+    def get_questions(self, course):
+        """Возвращает список вопросов курса"""
+
+        return [obj.question for obj in Questions.objects.filter(course=course)]
+
+    def get_count_of_questions(self, course):
+        """Возвращает количество вопросов в курсе"""
+
+        return Questions.objects.filter(course=course).count()
+
+    class Meta:
+        model = Course
+        fields = "__all__"

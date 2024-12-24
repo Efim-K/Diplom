@@ -1,44 +1,55 @@
 from django.urls import path
 
 from course.apps import CourseConfig
-from course.views import (AnswersDestroyAPIView, AnswersListAPIView,
-                          AnswersUpdateAPIView, CourseCreateAPIView,
-                          CourseDestroyAPIView, CourseListAPIView,
-                          CourseRetrieveAPIView, CourseUpdateAPIView,
-                          QuestionsDestroyAPIView, QuestionsListAPIView,
-                          QuestionsUpdateAPIView)
+from course.views import (AnswersCreateApiView, AnswersDestroyApiView,
+                          AnswersListApiView, AnswersUpdateApiView,
+                          CourseCreateApiView, CourseDestroyApiView,
+                          CourseListApiView, CourseRetrieveApiView,
+                          CourseUpdateApiView, QuestionsCreateApiView,
+                          QuestionsDestroyApiView, QuestionsListApiView,
+                          QuestionsUpdateApiView)
 
 app_name = CourseConfig.name
 
 
 urlpatterns = [
-    path("", CourseListAPIView.as_view(), name="course-list"),
-    path("create/", CourseCreateAPIView.as_view(), name="course-create"),
-    path("<int:pk>/", CourseRetrieveAPIView.as_view(), name="course-retrieve"),
-    path("<int:pk>/update/", CourseUpdateAPIView.as_view(), name="course-update"),
-    path("<int:pk>/delete/", CourseDestroyAPIView.as_view(), name="course-delete"),
-    path("questions/", QuestionsListAPIView.as_view(), name="questions-list"),
+    path("course/", CourseListApiView.as_view(), name="course-list"),
+    path("course/create/", CourseCreateApiView.as_view(), name="course-create"),
+    path("course/<int:pk>/", CourseRetrieveApiView.as_view(), name="course-retrieve"),
+    path(
+        "course/<int:pk>/update/", CourseUpdateApiView.as_view(), name="course-update"
+    ),
+    path(
+        "course/<int:pk>/delete/", CourseDestroyApiView.as_view(), name="course-delete"
+    ),
+    path("questions/", QuestionsListApiView.as_view(), name="questions-list"),
+    path(
+        "questions/create/", QuestionsCreateApiView.as_view(), name="questions-create"
+    ),
     path(
         "questions/<int:pk>/update/",
-        QuestionsUpdateAPIView.as_view(),
+        QuestionsUpdateApiView.as_view(),
         name="question-update",
     ),
     path(
         "questions/<int:pk>/delete/",
-        QuestionsDestroyAPIView.as_view(),
+        QuestionsDestroyApiView.as_view(),
         name="question-delete",
     ),
+    path("answers/", AnswersListApiView.as_view(), name="answers-list"),
     path(
-        "questions/<int:pk>/answers", AnswersListAPIView.as_view(), name="answers-list"
+        "answers/create/",
+        AnswersCreateApiView.as_view(),
+        name="answers-create",
     ),
     path(
-        "questions/<int:pk>/answers/<int:answer_pk>/update/",
-        AnswersUpdateAPIView.as_view(),
+        "answers/<int:pk>/update/",
+        AnswersUpdateApiView.as_view(),
         name="answers-update",
     ),
     path(
-        "questions/<int:pk>/answers/<int:answer_pk>/delete/",
-        AnswersDestroyAPIView.as_view(),
+        "answers/<int:pk>/delete/",
+        AnswersDestroyApiView.as_view(),
         name="answers-delete",
     ),
 ]

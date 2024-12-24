@@ -3,95 +3,95 @@ from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      UpdateAPIView)
 
 from course.models import Answers, Course, Questions
-from course.serializers import (AnswersSerializer, CourseSerializer,
-                                QuestionsSerializer)
+from course.serializers import (AnswersSerializer, CourseRetrieveSerializer,
+                                CourseSerializer, QuestionsSerializer)
 
 
-class CourseCreateAPIView(CreateAPIView):
+class CourseCreateApiView(CreateAPIView):
     """Создание курса"""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 
-class CourseListAPIView(ListAPIView):
+class CourseListApiView(ListAPIView):
     """Список всех курсов"""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 
-class CourseRetrieveAPIView(RetrieveAPIView):
+class CourseRetrieveApiView(RetrieveAPIView):
     """Получение информации о конкретном курсе"""
 
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+    serializer_class = CourseRetrieveSerializer
 
 
-class CourseUpdateAPIView(UpdateAPIView):
+class CourseUpdateApiView(UpdateAPIView):
     """Изменение информации о конкретном курсе"""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 
-class CourseDestroyAPIView(DestroyAPIView):
+class CourseDestroyApiView(DestroyAPIView):
     """Удаление конкретного курса"""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 
-class QuestionsCreateAPIView(CreateAPIView):
+class QuestionsCreateApiView(CreateAPIView):
     """Создание вопроса теста по курсу"""
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
 
 
-class QuestionsListAPIView(ListAPIView):
+class QuestionsListApiView(ListAPIView):
     """Список всех вопросов теста по конкретному курсу"""
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
 
 
-class QuestionsUpdateAPIView(UpdateAPIView):
+class QuestionsUpdateApiView(UpdateAPIView):
     """Изменение информации о конкретном вопросе теста"""
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
 
 
-class QuestionsDestroyAPIView(DestroyAPIView):
+class QuestionsDestroyApiView(DestroyAPIView):
     """Удаление конкретного вопроса теста"""
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
 
 
-class AnswersCreateAPIView(CreateAPIView):
+class AnswersCreateApiView(CreateAPIView):
     """Создание ответа к вопросу теста"""
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
 
 
-class AnswersListAPIView(ListAPIView):
+class AnswersListApiView(ListAPIView):
     """Список всех ответов к вопросу теста по конкретному вопросу"""
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
 
 
-class AnswersUpdateAPIView(UpdateAPIView):
+class AnswersUpdateApiView(UpdateAPIView):
     """Изменение информации о конкретном ответе к вопросу теста"""
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
 
 
-class AnswersDestroyAPIView(DestroyAPIView):
+class AnswersDestroyApiView(DestroyAPIView):
     """Удаление конкретного ответа к вопросу теста"""
 
     queryset = Answers.objects.all()
