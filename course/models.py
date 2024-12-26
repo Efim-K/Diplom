@@ -72,7 +72,7 @@ class Answers(models.Model):
         verbose_name_plural = "Ответы"
 
 
-class Students(models.Model):
+class AnswerStudent(models.Model):
     """Ответы на вопросы по курсу от студентов"""
 
     owner = models.ForeignKey(
@@ -92,3 +92,4 @@ class Students(models.Model):
     class Meta:
         verbose_name = "Ответ пользователя"
         verbose_name_plural = "Ответы пользователей"
+
