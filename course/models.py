@@ -73,7 +73,7 @@ class Answers(models.Model):
 
 
 class Students(models.Model):
-    """Студенты курса"""
+    """Ответы на вопросы по курсу от студентов"""
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь",
