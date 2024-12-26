@@ -34,6 +34,12 @@ class Questions(models.Model):
 
     question = models.CharField(max_length=255, verbose_name="Вопрос")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        verbose_name="Создатель вопроса теста",
+        **NULLABLE,
+    )
 
     def __str__(self):
         return self.question
@@ -51,6 +57,12 @@ class Answers(models.Model):
     )
     answer = models.CharField(max_length=255, verbose_name="Ответ")
     correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        verbose_name="Создатель ответа на вопрос",
+        **NULLABLE,
+    )
 
     def __str__(self):
         return self.answer
@@ -58,3 +70,25 @@ class Answers(models.Model):
     class Meta:
         verbose_name = "Ответ"
         verbose_name_plural = "Ответы"
+
+
+class Students(models.Model):
+    """Студенты курса"""
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь",
+    )
+    question = models.ForeignKey(
+        Questions, on_delete=models.CASCADE, verbose_name="Вопрос",
+    )
+    answer = models.ForeignKey(
+        Answers, on_delete=models.CASCADE, verbose_name="Ответ", **NULLABLE,
+    )
+    is_correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
+
+    def __str__(self):
+        return f"{self.owner} - {self.question} - {self.answer}"
+
+    class Meta:
+        verbose_name = "Ответ пользователя"
+        verbose_name_plural = "Ответы пользователей"
