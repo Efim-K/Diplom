@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -23,6 +24,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "users",
     "course",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -96,3 +98,18 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR.joinpath("media")
 
 AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+# Настройки срока действия токенов
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1500),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+}

@@ -1,10 +1,11 @@
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
-
+from rest_framework.permissions import IsAdminUser
 from course.models import Answers, Course, Questions
 from course.serializers import (AnswersSerializer, CourseRetrieveSerializer,
                                 CourseSerializer, QuestionsSerializer)
+from users.permissions import IsTeacher, IsOwner
 
 
 class CourseCreateApiView(CreateAPIView):
@@ -12,6 +13,14 @@ class CourseCreateApiView(CreateAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = (IsTeacher,)
+
+    def perform_create(self, serializer):
+        """Определение владельца курса"""
+
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
 
 
 class CourseListApiView(ListAPIView):
@@ -33,6 +42,7 @@ class CourseUpdateApiView(UpdateAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
 
 
 class CourseDestroyApiView(DestroyAPIView):
@@ -40,13 +50,22 @@ class CourseDestroyApiView(DestroyAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
 
 
 class QuestionsCreateApiView(CreateAPIView):
-    """Создание вопроса теста по курсу"""
+    """Создание вопроса по курсу"""
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
+    permission_classes = (IsTeacher, )
+
+    def perform_create(self, serializer):
+        """Определение владельца вопроса"""
+
+        questions = serializer.save()
+        questions.owner = self.request.user
+        questions.save()
 
 
 class QuestionsListApiView(ListAPIView):
@@ -61,6 +80,7 @@ class QuestionsUpdateApiView(UpdateAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
 
 
 class QuestionsDestroyApiView(DestroyAPIView):
@@ -68,6 +88,7 @@ class QuestionsDestroyApiView(DestroyAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
 
 
 class AnswersCreateApiView(CreateAPIView):
@@ -75,6 +96,7 @@ class AnswersCreateApiView(CreateAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
+    permission_classes = (IsTeacher,)
 
 
 class AnswersListApiView(ListAPIView):
@@ -89,6 +111,7 @@ class AnswersUpdateApiView(UpdateAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
 
 
 class AnswersDestroyApiView(DestroyAPIView):
@@ -96,3 +119,6 @@ class AnswersDestroyApiView(DestroyAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
+    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+
+

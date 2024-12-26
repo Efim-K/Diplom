@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from course.models import Answers, Course, Questions
+from users.permissions import IsTeacher
 
 
 class CourseSerializer(ModelSerializer):
