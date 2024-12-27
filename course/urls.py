@@ -2,13 +2,14 @@ from django.urls import path
 
 from course.apps import CourseConfig
 from course.views import (AnswersCreateApiView, AnswersDestroyApiView,
-                          AnswersListApiView, AnswersUpdateApiView,
+                          AnswersListApiView, AnswerStudentCreateApiView,
+                          AnswerStudentDestroyApiView,
+                          AnswerStudentListApiView, AnswersUpdateApiView,
                           CourseCreateApiView, CourseDestroyApiView,
                           CourseListApiView, CourseRetrieveApiView,
                           CourseUpdateApiView, QuestionsCreateApiView,
                           QuestionsDestroyApiView, QuestionsListApiView,
-                          QuestionsUpdateApiView, AnswerStudentCreateApiView, AnswerStudentListApiView,
-                          AnswerStudentDestroyApiView)
+                          QuestionsUpdateApiView)
 
 app_name = CourseConfig.name
 
@@ -58,8 +59,16 @@ urlpatterns = [
         AnswerStudentCreateApiView.as_view(),
         name="answer_student-create",
     ),
-    path("answer_student/", AnswerStudentListApiView.as_view(), name="answer_student-list"),
+    path(
+        "answer_student/",
+        AnswerStudentListApiView.as_view(),
+        name="answer_student-list",
+    ),
     # path("answer_student/<int:pk>/", AnswerStudentRetrieveApiView.as_view(), name="answer_student-retrieve"),
     # path("answer_student/<int:pk>/update/", AnswerStudentUpdateApiView.as_view(), name="answer_student-update"),
-    path("answer_student/<int:pk>/delete/", AnswerStudentDestroyApiView.as_view(), name="answer_student-delete"),
+    path(
+        "answer_student/<int:pk>/delete/",
+        AnswerStudentDestroyApiView.as_view(),
+        name="answer_student-delete",
+    ),
 ]

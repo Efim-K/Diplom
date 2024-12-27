@@ -76,13 +76,20 @@ class AnswerStudent(models.Model):
     """Ответы на вопросы по курсу от студентов"""
 
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь",
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
     )
     question = models.ForeignKey(
-        Questions, on_delete=models.CASCADE, verbose_name="Вопрос",
+        Questions,
+        on_delete=models.CASCADE,
+        verbose_name="Вопрос",
     )
     answer = models.ForeignKey(
-        Answers, on_delete=models.CASCADE, verbose_name="Ответ", **NULLABLE,
+        Answers,
+        on_delete=models.CASCADE,
+        verbose_name="Ответ",
+        **NULLABLE,
     )
     is_correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
 
@@ -92,4 +99,3 @@ class AnswerStudent(models.Model):
     class Meta:
         verbose_name = "Ответ пользователя"
         verbose_name_plural = "Ответы пользователей"
-

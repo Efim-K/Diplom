@@ -1,14 +1,15 @@
+from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import IsAdminUser
-from course.models import Answers, Course, Questions, AnswerStudent
-from course.serializers import (AnswersSerializer, CourseRetrieveSerializer,
-                                CourseSerializer, QuestionsSerializer, AnswerStudentSerializer)
-from users.permissions import IsTeacher, IsOwner
-
 from rest_framework.response import Response
-from rest_framework import status
+
+from course.models import Answers, AnswerStudent, Course, Questions
+from course.serializers import (AnswersSerializer, AnswerStudentSerializer,
+                                CourseRetrieveSerializer, CourseSerializer,
+                                QuestionsSerializer)
+from users.permissions import IsOwner, IsTeacher
 
 
 class CourseCreateApiView(CreateAPIView):
@@ -45,7 +46,10 @@ class CourseUpdateApiView(UpdateAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class CourseDestroyApiView(DestroyAPIView):
@@ -53,7 +57,10 @@ class CourseDestroyApiView(DestroyAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class QuestionsCreateApiView(CreateAPIView):
@@ -83,7 +90,10 @@ class QuestionsUpdateApiView(UpdateAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class QuestionsDestroyApiView(DestroyAPIView):
@@ -91,7 +101,10 @@ class QuestionsDestroyApiView(DestroyAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class AnswersCreateApiView(CreateAPIView):
@@ -121,7 +134,10 @@ class AnswersUpdateApiView(UpdateAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class AnswersDestroyApiView(DestroyAPIView):
@@ -129,7 +145,10 @@ class AnswersDestroyApiView(DestroyAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )
 
 
 class AnswerStudentCreateApiView(CreateAPIView):
@@ -161,4 +180,7 @@ class AnswerStudentDestroyApiView(DestroyAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswerStudentSerializer
-    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
+    permission_classes = (
+        IsTeacher | IsAdminUser,
+        IsOwner | IsAdminUser,
+    )

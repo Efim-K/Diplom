@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
-from course.models import Answers, Course, Questions, AnswerStudent
+from course.models import Answers, AnswerStudent, Course, Questions
 from course.validators import AnswerStudentValidators
 
 
@@ -14,6 +14,7 @@ class CourseSerializer(ModelSerializer):
 
 class QuestionsSerializer(ModelSerializer):
     """Serializer для вопроса"""
+
     answers = SerializerMethodField()
 
     def get_answers(self, instance):
@@ -56,6 +57,7 @@ class CourseRetrieveSerializer(ModelSerializer):
 
 class AnswerStudentSerializer(ModelSerializer):
     """Serializer для ответа"""
+
     course = SerializerMethodField()
     count_of_questions = SerializerMethodField()
     result = SerializerMethodField()
@@ -63,20 +65,26 @@ class AnswerStudentSerializer(ModelSerializer):
     def get_course(self, instance):
         """Возвращает курс, к которому относится ответ"""
 
-        return instance.answer.question.course.name if instance.answer.question else None
+        return (
+            instance.answer.question.course.name if instance.answer.question else None
+        )
 
     def get_count_of_questions(self, instance):
         """Возвращает количество отвеченных вопросов по курсу"""
 
-        return AnswerStudent.objects.filter(owner=instance.owner,
-                                            answer__question__course=instance.answer.question.course).count()
+        return AnswerStudent.objects.filter(
+            owner=instance.owner,
+            answer__question__course=instance.answer.question.course,
+        ).count()
 
     def get_result(self, instance):
         """Возвращает количество правильно отвеченных вопросов по курсу"""
 
-        return AnswerStudent.objects.filter(owner=instance.owner,
-                                            answer__question__course=instance.answer.question.course,
-                                            is_correct=True).count()
+        return AnswerStudent.objects.filter(
+            owner=instance.owner,
+            answer__question__course=instance.answer.question.course,
+            is_correct=True,
+        ).count()
 
     class Meta:
         model = AnswerStudent

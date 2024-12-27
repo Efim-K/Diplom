@@ -19,6 +19,7 @@ class UserCreateAPIView(CreateAPIView):
     """
     API view для создания нового пользователя.
     """
+
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = (AllowAny,)

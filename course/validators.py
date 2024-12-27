@@ -9,5 +9,7 @@ class AnswerStudentValidators:
         """Проверка валидности полей ответа студентов"""
 
         # Проверка уникальности ответа студента на вопрос
-        if AnswerStudent.objects.filter(owner=val.get("owner"), question=val.get("question")).exists():
+        if AnswerStudent.objects.filter(
+            owner=val.get("owner"), question=val.get("question")
+        ).exists():
             raise ValidationError("Уже имеется ответ на вопрос")
