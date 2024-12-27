@@ -9,7 +9,7 @@ from course.views import (AnswersCreateApiView, AnswersDestroyApiView,
                           CourseListApiView, CourseRetrieveApiView,
                           CourseUpdateApiView, QuestionsCreateApiView,
                           QuestionsDestroyApiView, QuestionsListApiView,
-                          QuestionsUpdateApiView)
+                          QuestionsUpdateApiView,)
 
 app_name = CourseConfig.name
 
@@ -65,7 +65,6 @@ urlpatterns = [
         name="answer_student-list",
     ),
     # path("answer_student/<int:pk>/", AnswerStudentRetrieveApiView.as_view(), name="answer_student-retrieve"),
-    # path("answer_student/<int:pk>/update/", AnswerStudentUpdateApiView.as_view(), name="answer_student-update"),
     path(
         "answer_student/<int:pk>/delete/",
         AnswerStudentDestroyApiView.as_view(),

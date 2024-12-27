@@ -184,3 +184,10 @@ class AnswerStudentDestroyApiView(DestroyAPIView):
         IsTeacher | IsAdminUser,
         IsOwner | IsAdminUser,
     )
+
+
+# class AnswerStudentRetrieveApiView(RetrieveAPIView):
+#     """Получение информации об ответе студента"""
+#
+#     queryset = AnswerStudent.objects.all()
+#     serializer_class = AnswerStudentSerializer
