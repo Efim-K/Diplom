@@ -8,6 +8,8 @@ class AnswerStudentValidators:
     def __call__(self, value):
         """Проверка валидности полей ответа студентов"""
 
+        val = dict(value)
+
         # Проверка уникальности ответа студента на вопрос
         if AnswerStudent.objects.filter(
             owner=val.get("owner"), question=val.get("question")
