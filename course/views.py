@@ -2,10 +2,13 @@ from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import IsAdminUser
-from course.models import Answers, Course, Questions
+from course.models import Answers, Course, Questions, AnswerStudent
 from course.serializers import (AnswersSerializer, CourseRetrieveSerializer,
-                                CourseSerializer, QuestionsSerializer)
+                                CourseSerializer, QuestionsSerializer, AnswerStudentSerializer)
 from users.permissions import IsTeacher, IsOwner
+
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class CourseCreateApiView(CreateAPIView):
@@ -13,7 +16,7 @@ class CourseCreateApiView(CreateAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (IsTeacher,)
+    permission_classes = (IsTeacher | IsAdminUser,)
 
     def perform_create(self, serializer):
         """Определение владельца курса"""
@@ -42,7 +45,7 @@ class CourseUpdateApiView(UpdateAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
 class CourseDestroyApiView(DestroyAPIView):
@@ -50,7 +53,7 @@ class CourseDestroyApiView(DestroyAPIView):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
 class QuestionsCreateApiView(CreateAPIView):
@@ -58,7 +61,7 @@ class QuestionsCreateApiView(CreateAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
-    permission_classes = (IsTeacher, )
+    permission_classes = (IsTeacher | IsAdminUser,)
 
     def perform_create(self, serializer):
         """Определение владельца вопроса"""
@@ -80,7 +83,7 @@ class QuestionsUpdateApiView(UpdateAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
 class QuestionsDestroyApiView(DestroyAPIView):
@@ -88,7 +91,7 @@ class QuestionsDestroyApiView(DestroyAPIView):
 
     queryset = Questions.objects.all()
     serializer_class = QuestionsSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
 class AnswersCreateApiView(CreateAPIView):
@@ -96,7 +99,14 @@ class AnswersCreateApiView(CreateAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
-    permission_classes = (IsTeacher,)
+    permission_classes = (IsTeacher | IsAdminUser,)
+
+    def perform_create(self, serializer):
+        """Определение владельца ответа"""
+
+        answers = serializer.save()
+        answers.owner = self.request.user
+        answers.save()
 
 
 class AnswersListApiView(ListAPIView):
@@ -111,7 +121,7 @@ class AnswersUpdateApiView(UpdateAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
 class AnswersDestroyApiView(DestroyAPIView):
@@ -119,6 +129,36 @@ class AnswersDestroyApiView(DestroyAPIView):
 
     queryset = Answers.objects.all()
     serializer_class = AnswersSerializer
-    permission_classes = (IsTeacher, IsOwner | IsAdminUser,)
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)
 
 
+class AnswerStudentCreateApiView(CreateAPIView):
+    """Создание ответа студента на вопрос теста"""
+
+    queryset = AnswerStudent.objects.all()
+    serializer_class = AnswerStudentSerializer
+
+    def perform_create(self, serializer):
+        """Определение владельца ответа студента"""
+
+        answer_student = serializer.save()
+        # сохраняем текущего владельца
+        answer_student.owner = self.request.user
+        # сохраняем ответ студента
+        answer_student.is_correct = answer_student.answer.correct
+        answer_student.save()
+
+
+class AnswerStudentListApiView(ListAPIView):
+    """Список всех ответов студента на вопросы теста"""
+
+    queryset = AnswerStudent.objects.all()
+    serializer_class = AnswerStudentSerializer
+
+
+class AnswerStudentDestroyApiView(DestroyAPIView):
+    """Удаление ответов студента"""
+
+    queryset = Answers.objects.all()
+    serializer_class = AnswerStudentSerializer
+    permission_classes = (IsTeacher | IsAdminUser, IsOwner | IsAdminUser,)

@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
-from course.models import Answers, Course, Questions
-from users.permissions import IsTeacher
+from course.models import Answers, Course, Questions, AnswerStudent
+from course.validators import AnswerStudentValidators
 
 
 class CourseSerializer(ModelSerializer):
@@ -14,6 +14,11 @@ class CourseSerializer(ModelSerializer):
 
 class QuestionsSerializer(ModelSerializer):
     """Serializer для вопроса"""
+    answers = SerializerMethodField()
+
+    def get_answers(self, instance):
+        """Возвращает список id ответов в вопросе теста"""
+        return [obj.id for obj in Answers.objects.filter(question=instance)]
 
     class Meta:
         model = Questions
@@ -47,3 +52,33 @@ class CourseRetrieveSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class AnswerStudentSerializer(ModelSerializer):
+    """Serializer для ответа"""
+    course = SerializerMethodField()
+    count_of_questions = SerializerMethodField()
+    result = SerializerMethodField()
+
+    def get_course(self, instance):
+        """Возвращает курс, к которому относится ответ"""
+
+        return instance.answer.question.course.name if instance.answer.question else None
+
+    def get_count_of_questions(self, instance):
+        """Возвращает количество отвеченных вопросов по курсу"""
+
+        return AnswerStudent.objects.filter(owner=instance.owner,
+                                            answer__question__course=instance.answer.question.course).count()
+
+    def get_result(self, instance):
+        """Возвращает количество правильно отвеченных вопросов по курсу"""
+
+        return AnswerStudent.objects.filter(owner=instance.owner,
+                                            answer__question__course=instance.answer.question.course,
+                                            is_correct=True).count()
+
+    class Meta:
+        model = AnswerStudent
+        fields = "__all__"
+        validators = [AnswerStudentValidators()]
