@@ -31,12 +31,12 @@ urlpatterns = [
     path(
         "questions/<int:pk>/update/",
         QuestionsUpdateApiView.as_view(),
-        name="question-update",
+        name="questions-update",
     ),
     path(
         "questions/<int:pk>/delete/",
         QuestionsDestroyApiView.as_view(),
-        name="question-delete",
+        name="questions-delete",
     ),
     path("answers/", AnswersListApiView.as_view(), name="answers-list"),
     path(
