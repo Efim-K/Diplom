@@ -1,13 +1,10 @@
-from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
 
 from course.models import Answers, AnswerStudent, Course, Questions
-from course.serializers import (AnswersSerializer, AnswerStudentSerializer,
-                                CourseRetrieveSerializer, CourseSerializer,
+from course.serializers import (AnswersSerializer, AnswerStudentSerializer, CourseSerializer,
                                 QuestionsSerializer)
 from users.permissions import IsOwner, IsTeacher
 
@@ -38,7 +35,7 @@ class CourseRetrieveApiView(RetrieveAPIView):
     """Получение информации о конкретном курсе"""
 
     queryset = Course.objects.all()
-    serializer_class = CourseRetrieveSerializer
+    serializer_class = CourseSerializer
 
 
 class CourseUpdateApiView(UpdateAPIView):
@@ -163,9 +160,24 @@ class AnswerStudentCreateApiView(CreateAPIView):
         answer_student = serializer.save()
         # сохраняем текущего владельца
         answer_student.owner = self.request.user
-        # сохраняем ответ студента
-        answer_student.is_correct = answer_student.answer.correct
+
+        if answer_student.answer.correct:
+            answer_student.is_correct = True
+
+        # увеличиваем счетчик правильных ответов с фильтром по пользователю и курсу
+        answer_student.count_of_correct = AnswerStudent.objects.filter(owner=self.request.user,
+                                                                             answer__question__course=answer_student.answer.question.course,
+                                                                             is_correct=True).count()
+        # увеличиваем счетчик заданных вопросов пользователю и курсу
+        answer_student.count_of_question = AnswerStudent.objects.filter(owner=self.request.user,
+                                                                             answer__question__course=answer_student.answer.question.course).count()
+
         answer_student.save()
+
+    def get_queryset(self):
+        """Ограничение доступа к ответам студента по текущему владельцу"""
+
+        return AnswerStudent.objects.filter(owner=self.request.user)
 
 
 class AnswerStudentListApiView(ListAPIView):
@@ -186,8 +198,8 @@ class AnswerStudentDestroyApiView(DestroyAPIView):
     )
 
 
-# class AnswerStudentRetrieveApiView(RetrieveAPIView):
-#     """Получение информации об ответе студента"""
-#
-#     queryset = AnswerStudent.objects.all()
-#     serializer_class = AnswerStudentSerializer
+class AnswerStudentRetrieveApiView(RetrieveAPIView):
+    """Получение информации об ответе студента"""
+
+    queryset = AnswerStudent.objects.all()
+    serializer_class = AnswerStudentSerializer

@@ -15,3 +15,10 @@ class AnswerStudentValidators:
             owner=val.get("owner"), question=val.get("question")
         ).exists():
             raise ValidationError("Уже имеется ответ на вопрос")
+
+        # Проверка зависимости ответа к вопросу
+        if val.get("answer").question != val.get("question"):
+            raise ValidationError("Ответ должен быть к вопросу")
+
+
+
