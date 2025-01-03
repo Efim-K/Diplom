@@ -75,10 +75,10 @@ class CourseSerializer(ModelSerializer):
         return Questions.objects.filter(course=course).count()
 
     # def get_answer_students(self, instance):
-    #     """Возвращает список студентов курса"""
-    #     course = instance.id
-    #     return {"Кол-во отвеченных вопросов": self.answer_students.count_of_question,
-    #             "Кол-во правильных ответов": self.answer_students.count_of_correct,
+    #
+    #
+    #     return {"Кол-во отвеченных вопросов": AnswerStudent.count_of_question,
+    #             "Кол-во правильных ответов": AnswerStudent.count_of_correct,
     #     }
 
     class Meta:
