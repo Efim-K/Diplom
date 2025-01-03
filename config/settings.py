@@ -26,9 +26,11 @@ INSTALLED_APPS = [
     "course",
     "rest_framework_simplejwt",
     "drf_yasg",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -100,6 +102,7 @@ MEDIA_ROOT = BASE_DIR.joinpath("media")
 
 AUTH_USER_MODEL = "users.User"
 
+# Настройки DRF
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -114,3 +117,12 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50000),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
 }
+
+# Настройки CORS
+CORS_ALLOWED_ORIGINS = [
+    "https://read-only.example.com",
+    "https://read-and-write.example.com",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://read-and-write.example.com",
+]
