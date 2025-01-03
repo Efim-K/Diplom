@@ -33,22 +33,24 @@ class AnswerStudentSerializer(ModelSerializer):
     def get_info_course(self, instance):
         """Возвращает информацию о курсах"""
 
-        for course in Questions.objects.filter(course=instance.answer.question.course):
-            if instance.count_of_question != 0:
-                course = instance.answer.question.course
-                percent_correct = instance.count_of_correct * 100 / instance.count_of_question
-                result = {"id": course.id, "Название темы": course.name,
-                          "Кол-во отвеченных вопросов": instance.count_of_question,
-                          "Кол-во правильных ответов": instance.count_of_correct,
-                          "Процент правильных ответов": percent_correct,
-                          }
-                return result
-            else:
-                course = instance.answer.question.course
-                result = {"id": course.id, "Название темы": course.name,
-                          "Кол-во отвеченных вопросов": instance.count_of_question
-                          }
-                return result
+        if instance.count_of_question != 0:
+            percent_correct = instance.count_of_correct * 100 / instance.count_of_question
+            result = {"тема id": instance.answer.question.course.id,
+                      "Название темы": instance.answer.question.course.name,
+                      "Вопрос id": instance.answer.question.id,
+                      "Вопрос": instance.answer.question.question,
+                      "Выдан ответ": instance.answer.answer,
+                      "Кол-во отвеченных вопросов": instance.count_of_question,
+                      "Кол-во правильных ответов": instance.count_of_correct,
+                      "Процент правильных ответов": int(percent_correct),
+                      }
+            return result
+        else:
+            result = {"id": instance.answer.question.course.id,
+                      "Название темы": instance.answer.question.course.name,
+                      "Кол-во отвеченных вопросов": instance.count_of_question
+                      }
+            return result
 
     class Meta:
         model = AnswerStudent
@@ -62,7 +64,7 @@ class CourseSerializer(ModelSerializer):
 
     count_of_questions = SerializerMethodField()
     questions = SerializerMethodField()
-    answer_students = AnswerStudentSerializer(many=True, read_only=True)
+    answer_student = SerializerMethodField()
 
     def get_questions(self, course):
         """Возвращает список вопросов курса"""
@@ -74,14 +76,33 @@ class CourseSerializer(ModelSerializer):
 
         return Questions.objects.filter(course=course).count()
 
-    # def get_answer_students(self, instance):
-    #
-    #
-    #     return {"Кол-во отвеченных вопросов": AnswerStudent.count_of_question,
-    #             "Кол-во правильных ответов": AnswerStudent.count_of_correct,
-    #     }
+    def get_answer_student(self, instance):
+        """Возвращает список студентов курса"""
+
+        # Получаем текущего пользователя
+        user = self.context['request'].user
+
+        # Получаем все AnswerStudent, связанные с текущим курсом
+        try:
+            answer_student = AnswerStudent.objects.filter(owner=user,
+                question__course=instance).latest('id')
+
+            count_question = answer_student.count_of_question
+            count_correct = answer_student.count_of_correct
+            percent_correct = 0
+            if count_question != 0:
+                percent_correct = count_correct * 100 / count_question
+            return {"Кол-во отвеченных вопросов": count_question,
+                    "Кол-во правильных ответов": count_correct,
+                    "Процент правильных ответов": int(percent_correct),
+            }
+        except AnswerStudent.DoesNotExist:
+            return {"Кол-во отвеченных вопросов": 0,
+                    "Кол-во правильных ответов": 0,
+                    "Процент правильных ответов": 0,
+            }
 
     class Meta:
         model = Course
-        # fields = ['id', 'name', 'description', 'count_of_questions', 'questions', 'answer_students', "owner"]
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'count_of_questions', 'questions', 'answer_student', "owner"]
+

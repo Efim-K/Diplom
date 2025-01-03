@@ -163,6 +163,7 @@ class AnswerStudentCreateApiView(CreateAPIView):
 
         if answer_student.answer.correct:
             answer_student.is_correct = True
+            answer_student.save()
 
         # увеличиваем счетчик правильных ответов с фильтром по пользователю и курсу
         answer_student.count_of_correct = AnswerStudent.objects.filter(owner=self.request.user,
@@ -185,6 +186,14 @@ class AnswerStudentListApiView(ListAPIView):
 
     queryset = AnswerStudent.objects.all()
     serializer_class = AnswerStudentSerializer
+
+    def get_queryset(self):
+        """Ограничение доступа к ответам студента по текущему владельцу, кроме администратора и преподавателей"""
+
+        if self.request.user.is_staff | self.request.user.groups.filter(name="teacher").exists():
+            return AnswerStudent.objects.all()
+
+        return AnswerStudent.objects.filter(owner=self.request.user)
 
 
 class AnswerStudentDestroyApiView(DestroyAPIView):
