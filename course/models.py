@@ -92,8 +92,12 @@ class AnswerStudent(models.Model):
         **NULLABLE,
     )
     is_correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
-    count_of_question = models.IntegerField(default=0, verbose_name="Количество вопросов курса")
-    count_of_correct = models.IntegerField(default=0, verbose_name="Количество правильных ответов")
+    count_of_question = models.IntegerField(
+        default=0, verbose_name="Количество вопросов курса"
+    )
+    count_of_correct = models.IntegerField(
+        default=0, verbose_name="Количество правильных ответов"
+    )
 
     def __str__(self):
         return f"{self.answer}"

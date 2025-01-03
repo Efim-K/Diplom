@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from course.models import Course, Questions, Answers, AnswerStudent
+from course.models import Answers, AnswerStudent, Course, Questions
 from users.models import User
 
 
@@ -17,7 +17,6 @@ class CourseTestCase(APITestCase):
             owner=self.user,
             name="алгебра",
             description="Отдел математики, изучающий свойства величин",
-
         )
         self.questions = Questions.objects.create(
             course=self.course,
@@ -68,7 +67,9 @@ class CourseTestCase(APITestCase):
         data = {"name": "алгебра (новое название)"}
         response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Course.objects.get(pk=self.course.pk).name, "алгебра (новое название)")
+        self.assertEqual(
+            Course.objects.get(pk=self.course.pk).name, "алгебра (новое название)"
+        )
 
     def test_course_destroy(self):
         """проверка удаления курса"""
@@ -99,7 +100,10 @@ class CourseTestCase(APITestCase):
         data = {"question": "Что такое квадрат (новый вопрос)?"}
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Questions.objects.get(pk=self.questions.pk).question, "Что такое квадрат (новый вопрос)?")
+        self.assertEqual(
+            Questions.objects.get(pk=self.questions.pk).question,
+            "Что такое квадрат (новый вопрос)?",
+        )
 
     def test_questions_destroy(self):
         """проверка удаления вопроса"""
@@ -134,7 +138,9 @@ class CourseTestCase(APITestCase):
         data = {"answer": "Число (новый ответ)"}
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Answers.objects.get(pk=self.answers.pk).answer, "Число (новый ответ)")
+        self.assertEqual(
+            Answers.objects.get(pk=self.answers.pk).answer, "Число (новый ответ)"
+        )
 
     def test_answers_destroy(self):
         """проверка удаления ответа"""
@@ -166,14 +172,18 @@ class CourseTestCase(APITestCase):
 
     def test_answer_student_retrieve(self):
         """проверка получения конкретного ответа студента"""
-        url = reverse("course:answer_student-retrieve", kwargs={"pk": self.answer_student.pk})
+        url = reverse(
+            "course:answer_student-retrieve", kwargs={"pk": self.answer_student.pk}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["is_correct"], False)
 
     def test_answer_student_destroy(self):
         """проверка удаления ответа студента"""
-        url = reverse("course:answer_student-delete", kwargs={"pk": self.answer_student.pk})
+        url = reverse(
+            "course:answer_student-delete", kwargs={"pk": self.answer_student.pk}
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(AnswerStudent.objects.count(), 0)

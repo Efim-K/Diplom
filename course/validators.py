@@ -19,6 +19,3 @@ class AnswerStudentValidators:
         # Проверка зависимости ответа к вопросу
         if val.get("answer").question != val.get("question"):
             raise ValidationError("Ответ должен быть к заданному вопросу")
-
-
-
