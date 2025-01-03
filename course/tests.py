@@ -149,7 +149,7 @@ class CourseTestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["is_correct"], False)
 
-    def test_answer_student__retrieve(self):
+    def test_answer_student_retrieve(self):
         url = reverse("course:answer_student-retrieve", kwargs={"pk": self.answer_student.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
