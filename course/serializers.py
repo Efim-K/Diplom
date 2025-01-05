@@ -4,6 +4,7 @@ from rest_framework.serializers import (ModelSerializer, ReadOnlyField,
 from course.models import Answers, AnswerStudent, Course, Questions
 from course.validators import AnswerStudentValidators
 
+from rest_framework.serializers import ValidationError
 
 class QuestionsSerializer(ModelSerializer):
     """Serializer для вопроса"""
@@ -63,6 +64,19 @@ class AnswerStudentSerializer(ModelSerializer):
                 "Кол-во отвеченных вопросов": instance.count_of_question,
             }
             return result
+
+    def validate(self, data):
+        """Проверяет корректность ответа"""
+        request = self.context.get('request')
+        # Получаем текущего пользователя
+        user = request.user
+
+        # Если ответ есть и он принадлежит текущему пользователю,
+        if AnswerStudent.objects.filter(owner=user, question=data.get("question")).exists():
+            raise ValidationError("Уже имеется ответ на вопрос")
+
+        return data
+
 
     class Meta:
         model = AnswerStudent

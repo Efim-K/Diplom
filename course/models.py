@@ -79,6 +79,7 @@ class AnswerStudent(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
+        **NULLABLE,
     )
     question = models.ForeignKey(
         Questions,
@@ -100,7 +101,7 @@ class AnswerStudent(models.Model):
     )
 
     def __str__(self):
-        return f"{self.answer}"
+        return f"{self.owner} - {self.question} - {self.answer}"
 
     class Meta:
         verbose_name = "Ответ пользователя"
