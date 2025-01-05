@@ -29,12 +29,6 @@ class CourseTestCase(APITestCase):
             answer="Число, умноженное на само себя",
             correct=True,
         )
-        self.answer_student = AnswerStudent.objects.create(
-            answer=self.answers,
-            question=self.questions,
-            owner=self.user,
-            # is_correct=False,
-        )
 
         self.client.force_authenticate(user=self.user)
 
@@ -156,14 +150,16 @@ class CourseTestCase(APITestCase):
             "answer": self.answers.pk,
             "question": self.questions.pk,
             "owner": self.user.pk,
-            "is_correct": True,
         }
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(AnswerStudent.objects.count(), 2)
+        self.assertEqual(AnswerStudent.objects.count(), 1)
 
     def test_answer_student_list(self):
         """проверка получения списка всех ответов студента"""
+        self.answer_student = AnswerStudent.objects.create(
+            answer=self.answers, question=self.questions, owner=self.user
+        )
         url = reverse("course:answer_student-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -172,6 +168,10 @@ class CourseTestCase(APITestCase):
 
     def test_answer_student_retrieve(self):
         """проверка получения конкретного ответа студента"""
+        self.answer_student = AnswerStudent.objects.create(
+            answer=self.answers, question=self.questions, owner=self.user
+        )
+
         url = reverse(
             "course:answer_student-retrieve", kwargs={"pk": self.answer_student.pk}
         )
@@ -181,6 +181,10 @@ class CourseTestCase(APITestCase):
 
     def test_answer_student_destroy(self):
         """проверка удаления ответа студента"""
+        self.answer_student = AnswerStudent.objects.create(
+            answer=self.answers, question=self.questions, owner=self.user
+        )
+
         url = reverse(
             "course:answer_student-delete", kwargs={"pk": self.answer_student.pk}
         )
